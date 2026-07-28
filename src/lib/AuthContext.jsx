@@ -4,17 +4,15 @@ import { supabase, isSupabaseConfigured } from "./supabaseClient"
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser]       = useState(null)
+  const [user, setUser]     = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!isSupabaseConfigured) {
-      // Demo mode: check sessionStorage for persisted demo session
-      const demo = sessionStorage.getItem("genolab_demo_user")
-      if (demo) setUser(JSON.parse(demo))
-      setLoading(false)
-      return
-    }
+    // Check for persisted demo session
+    const demo = sessionStorage.getItem("genolab_demo_user")
+    if (demo) { setUser(JSON.parse(demo)); setLoading(false); return }
+
+    if (!isSupabaseConfigured) { setLoading(false); return }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
@@ -27,31 +25,30 @@ export function AuthProvider({ children }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  async function login(email, password) {
-    if (!isSupabaseConfigured) {
-      // Demo mode: accept any non-empty credentials
-      if (!email || !password) throw new Error("Enter email and password.")
-      const demoUser = { email, id: "demo", role: "lab_admin" }
-      sessionStorage.setItem("genolab_demo_user", JSON.stringify(demoUser))
-      setUser(demoUser)
-      return
-    }
+  // Demo login — no credentials needed
+  async function loginDemo() {
+    const demoUser = { email: "admin@genolab.in", id: "demo", role: "lab_admin", isDemo: true }
+    sessionStorage.setItem("genolab_demo_user", JSON.stringify(demoUser))
+    setUser(demoUser)
+  }
+
+  // Live login — uses Supabase auth
+  async function loginLive(email, password) {
+    if (!isSupabaseConfigured) throw new Error("Supabase is not configured. Add credentials to .env file.")
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
   }
 
   async function logout() {
-    if (!isSupabaseConfigured) {
-      sessionStorage.removeItem("genolab_demo_user")
-      setUser(null)
-      return
+    sessionStorage.removeItem("genolab_demo_user")
+    if (isSupabaseConfigured && user && !user.isDemo) {
+      await supabase.auth.signOut()
     }
-    await supabase.auth.signOut()
     setUser(null)
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, loginDemo, loginLive, logout }}>
       {children}
     </AuthContext.Provider>
   )
