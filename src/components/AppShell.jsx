@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { NavLink, useNavigate } from "react-router-dom"
 import { useAuth } from "../lib/AuthContext"
-import { isSupabaseConfigured } from "../lib/supabaseClient"
+import { isLiveMode } from "../lib/supabaseClient"
 
 const NAV = [
   { to: "/dashboard",  label: "Dashboard",      icon: IconDashboard  },
@@ -80,10 +80,10 @@ export default function AppShell({ children }) {
 
         {/* Footer */}
         <div className="px-4 py-4 border-t border-white/8">
-          {!isSupabaseConfigured && (
+          {!isLiveMode() && (
             <div className="mb-3 rounded-lg bg-amber/10 border border-amber/20 px-3 py-2">
               <p className="text-[11px] text-amber leading-snug">
-                Demo mode — mock data active. Add Supabase credentials in .env for live data.
+                Demo mode — mock data active.
               </p>
             </div>
           )}

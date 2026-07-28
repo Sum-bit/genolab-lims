@@ -1,9 +1,11 @@
 import AppShell from "../components/AppShell"
 import { useAuth } from "../lib/AuthContext"
-import { isSupabaseConfigured } from "../lib/supabaseClient"
+import { isLiveMode } from "../lib/supabaseClient"
+import { useAppContext } from "../App"
 
-export default function Settings({ darkMode, setDarkMode }) {
+export default function Settings() {
   const { user } = useAuth()
+  const { darkMode, setDarkMode } = useAppContext()
 
   return (
     <AppShell>
@@ -39,7 +41,7 @@ export default function Settings({ darkMode, setDarkMode }) {
 
         {/* System info */}
         <Section title="System">
-          <Row label="Database" value={isSupabaseConfigured ? "Supabase (live)" : "Mock data (demo)"} />
+          <Row label="Database" value={isLiveMode() ? "Supabase (live)" : "Mock data (demo)"} />
           <Row label="Version"  value="1.0.0" mono />
           <Row label="Stack"    value="Vite + React + Tailwind + Supabase" />
         </Section>

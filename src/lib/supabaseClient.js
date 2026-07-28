@@ -11,13 +11,27 @@ export const supabase = isSupabaseConfigured
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null
 
+// ─── Mode override ────────────────────────────────────────────────────────────
+// The user's login choice (Demo vs Live) always wins, even when Supabase IS
+// configured. AuthContext calls setForceMock() whenever the session changes
+// (demo login, live login, restoring a persisted demo session, logout).
+let forceMock = false
+export function setForceMock(value) {
+  forceMock = value
+}
+
+// True only when Supabase is configured AND the user hasn't chosen Demo mode.
+export function isLiveMode() {
+  return isSupabaseConfigured && !forceMock
+}
+
 // ─── In-memory mock store (for demo mode) ────────────────────────────────────
 let mockStore = [...MOCK_SAMPLES]
 
 // ─── Data access functions ────────────────────────────────────────────────────
 
 export async function fetchSamples() {
-  if (!isSupabaseConfigured) {
+  if (!isLiveMode()) {
     return [...mockStore].sort(
       (a, b) => new Date(b.created_at) - new Date(a.created_at)
     )
@@ -31,7 +45,7 @@ export async function fetchSamples() {
 }
 
 export async function addSample(sample) {
-  if (!isSupabaseConfigured) {
+  if (!isLiveMode()) {
     const newSample = {
       ...sample,
       id: String(Date.now()),
@@ -53,7 +67,7 @@ export async function addSample(sample) {
 }
 
 export async function updateSampleStatus(id, status) {
-  if (!isSupabaseConfigured) {
+  if (!isLiveMode()) {
     mockStore = mockStore.map((s) =>
       s.id === id ? { ...s, status } : s
     )
@@ -67,7 +81,7 @@ export async function updateSampleStatus(id, status) {
 }
 
 export async function updateSampleResult(id, result) {
-  if (!isSupabaseConfigured) {
+  if (!isLiveMode()) {
     mockStore = mockStore.map((s) =>
       s.id === id ? { ...s, result } : s
     )
@@ -81,7 +95,7 @@ export async function updateSampleResult(id, result) {
 }
 
 export async function deleteSample(id) {
-  if (!isSupabaseConfigured) {
+  if (!isLiveMode()) {
     mockStore = mockStore.filter((s) => s.id !== id)
     return
   }

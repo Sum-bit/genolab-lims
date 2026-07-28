@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react"
-import { supabase, isSupabaseConfigured } from "./supabaseClient"
+import { supabase, isSupabaseConfigured, setForceMock } from "./supabaseClient"
 
 const AuthContext = createContext(null)
 
@@ -10,8 +10,9 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     // Check for persisted demo session
     const demo = sessionStorage.getItem("genolab_demo_user")
-    if (demo) { setUser(JSON.parse(demo)); setLoading(false); return }
+    if (demo) { setForceMock(true); setUser(JSON.parse(demo)); setLoading(false); return }
 
+    setForceMock(false)
     if (!isSupabaseConfigured) { setLoading(false); return }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -27,6 +28,7 @@ export function AuthProvider({ children }) {
 
   // Demo login — no credentials needed
   async function loginDemo() {
+    setForceMock(true)
     const demoUser = { email: "admin@genolab.in", id: "demo", role: "lab_admin", isDemo: true }
     sessionStorage.setItem("genolab_demo_user", JSON.stringify(demoUser))
     setUser(demoUser)
@@ -37,6 +39,7 @@ export function AuthProvider({ children }) {
     if (!isSupabaseConfigured) throw new Error("Supabase is not configured. Add credentials to .env file.")
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
+    setForceMock(false)
   }
 
   async function logout() {
@@ -44,6 +47,7 @@ export function AuthProvider({ children }) {
     if (isSupabaseConfigured && user && !user.isDemo) {
       await supabase.auth.signOut()
     }
+    setForceMock(false)
     setUser(null)
   }
 
