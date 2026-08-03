@@ -17,30 +17,30 @@ body {
   color: white;
 }
 
-/* Reusable input style */
+/* ── Reusable input style ─────────────────────────────────────────────────── */
 .input {
   @apply w-full px-3 py-2.5 rounded-lg border border-canvas-200 bg-white text-sm text-ink-900
     focus:outline-none focus:ring-2 focus:ring-indigo focus:border-indigo transition-colors;
 }
 
-/* Scrollbar styling */
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
-/* Status badge base */
+/* ── Badges ───────────────────────────────────────────────────────────────── */
 .badge {
   @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
 }
 
-/* Sidebar nav active glow */
+/* ── Nav active ───────────────────────────────────────────────────────────── */
 .nav-active {
   background: linear-gradient(90deg, rgba(99,102,241,0.15) 0%, rgba(99,102,241,0.05) 100%);
   border-left: 2px solid #6366F1;
 }
 
-/* Overdue row highlight */
+/* ── Overdue row ──────────────────────────────────────────────────────────── */
 .row-overdue {
   background-color: rgba(244, 63, 94, 0.04);
 }
@@ -48,18 +48,18 @@ body {
   background-color: rgba(244, 63, 94, 0.08) !important;
 }
 
-/* Card enter animation */
+/* ── Animations ───────────────────────────────────────────────────────────── */
 .card-enter {
   animation: slide-up 0.2s ease-out both;
 }
 
-/* Grid dot pattern for sidebar */
+/* ── Sidebar grid pattern ─────────────────────────────────────────────────── */
 .grid-pattern {
   background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
   background-size: 18px 18px;
 }
 
-/* Toast */
+/* ── Toast ────────────────────────────────────────────────────────────────── */
 .toast-container {
   position: fixed;
   bottom: 1.5rem;
@@ -76,4 +76,128 @@ body {
     right: 1rem;
     left: 1rem;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DARK MODE OVERRIDES
+   Applied when .dark class is on the root div (set by Settings toggle)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Page background */
+.dark body,
+.dark #root {
+  background-color: #0F172A;
+  color: #F1F5F9;
+}
+
+/* Main content area */
+.dark .bg-canvas-50,
+.dark .bg-canvas-100 {
+  background-color: #0F172A !important;
+}
+
+/* Cards — white → dark slate */
+.dark .bg-white {
+  background-color: #1E293B !important;
+  color: #F1F5F9;
+}
+
+/* Card borders */
+.dark .border-canvas-100,
+.dark .border-canvas-200 {
+  border-color: #334155 !important;
+}
+
+/* Dividers */
+.dark .divide-canvas-100 > * + * {
+  border-color: #334155 !important;
+}
+
+/* Text colors */
+.dark .text-ink-900 { color: #F1F5F9 !important; }
+.dark .text-ink-700 { color: #CBD5E1 !important; }
+.dark .text-ink-500 { color: #94A3B8 !important; }
+
+/* Table head bg */
+.dark .bg-canvas-50.text-left,
+.dark thead tr {
+  background-color: #1E293B !important;
+}
+
+/* Table rows hover */
+.dark .hover\:bg-canvas-50:hover {
+  background-color: #334155 !important;
+}
+
+/* Input fields */
+.dark .input {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+  color: #F1F5F9 !important;
+}
+
+.dark .input::placeholder {
+  color: #64748B !important;
+}
+
+/* Select dropdowns */
+.dark select {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+  color: #F1F5F9 !important;
+}
+
+/* Mobile header */
+.dark header.md\:hidden {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* Summary cards on analytics */
+.dark .shadow-card {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+}
+
+/* Recharts tooltip */
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+  color: #F1F5F9 !important;
+}
+
+/* Recharts axis text */
+.dark .recharts-cartesian-axis-tick-value {
+  fill: #64748B !important;
+}
+
+/* Modal backgrounds */
+.dark .bg-white.rounded-2xl {
+  background-color: #1E293B !important;
+}
+
+/* Status badge backgrounds in dark mode — keep them readable */
+.dark .bg-indigo\/10  { background-color: rgba(99,102,241,0.2)  !important; }
+.dark .bg-amber\/10   { background-color: rgba(245,158,11,0.2)   !important; }
+.dark .bg-emerald\/10 { background-color: rgba(16,185,129,0.2)   !important; }
+.dark .bg-rose\/10    { background-color: rgba(244,63,94,0.2)    !important; }
+
+/* Stat card borders stay colored */
+.dark .border-l-indigo  { border-left-color: #6366F1 !important; }
+.dark .border-l-amber   { border-left-color: #F59E0B !important; }
+.dark .border-l-emerald { border-left-color: #10B981 !important; }
+.dark .border-l-rose    { border-left-color: #F43F5E !important; }
+
+/* Overdue row in dark mode */
+.dark .row-overdue {
+  background-color: rgba(244, 63, 94, 0.08) !important;
+}
+
+/* Scrollbar in dark mode */
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* Section headers in settings */
+.dark .border-b.border-canvas-100 {
+  border-color: #334155 !important;
 }
